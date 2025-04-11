@@ -7,7 +7,6 @@ function createCard(cardInfo, deleteHandler, likeHandler, imageHandler) {
     const cardImage = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
     const cardDeleteButton = cardElement.querySelector('.card__delete-button');
-    const cardLikeButton = cardElement.querySelector('.card__like-button');
 
     cardImage.src = cardInfo.link;
     cardImage.alt = cardInfo.name;
