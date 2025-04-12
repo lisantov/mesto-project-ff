@@ -1,4 +1,19 @@
-import { handleKeyClose } from "../scripts/index.js";
+/* ЗАКРЫТИЕ ПОПАПА ЧЕРЕЗ ESC */
+function handleKeyClose(evt) {
+    if(evt.key === 'Escape') {
+        const currentPopup = document.querySelector('.popup_is-opened');
+        closeModal(currentPopup);
+    }        
+}
+
+/* ЗАКРЫТИЕ ПОПАПА ЧЕРЕЗ КЛИК */
+function handleClickClose(evt) {
+    if(evt.target.classList.contains('popup__close') ||
+    evt.target.classList.contains('popup')) {
+        const currentPopup = document.querySelector('.popup_is-opened');
+        closeModal(currentPopup);
+    }
+}
 
 /* ФУНКЦИОНАЛЬНОСТЬ ЗАКРЫТИЯ ПОПАПА */
 function closeModal(popup) {
@@ -10,6 +25,8 @@ function closeModal(popup) {
 function openModal(popup) {
     popup.classList.add('popup_is-opened');
     document.addEventListener('keydown', handleKeyClose);
+    popup.addEventListener('click', handleClickClose);
 }
+
 
 export { closeModal, openModal };
