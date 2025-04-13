@@ -24,12 +24,8 @@ const elements = {
 };
 
 /* СЛУШАТЕЛИ КНОПОК ОТКРЫТИЯ ПОПАПОВ */
-elements.editButton.addEventListener('click', () => {
-    handleEditProfile();
-});
-elements.addButton.addEventListener('click', () => {
-    handleAddCard();
-});
+elements.editButton.addEventListener('click', () => { handleEditProfile(); });
+elements.addButton.addEventListener('click', () => { handleAddCard(); });
 
 /* СЛУШАТЕЛИ ОТПРАВКИ ФОРМ */
 elements.editForm.addEventListener('submit', handleEditSubmit);

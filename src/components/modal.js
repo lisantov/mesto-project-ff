@@ -28,5 +28,4 @@ function openModal(popup) {
     popup.addEventListener('click', handleClickClose);
 }
 
-
 export { closeModal, openModal };

@@ -16,7 +16,6 @@ function createCard(cardInfo, deleteHandler, likeHandler, imageHandler) {
     cardImage.addEventListener('click', () => imageHandler(cardInfo));
     cardDeleteButton.addEventListener('click', () => deleteHandler(cardElement));
     cardLikeButton.addEventListener('click', likeHandler);
-
     return cardElement;
 }
 
