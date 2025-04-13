@@ -36,7 +36,7 @@ elements.editForm.addEventListener('submit', handleEditSubmit);
 elements.addForm.addEventListener('submit', handleAddSubmit);
 
 /* ДОБАВЛЕНИЕ КАРТОЧЕК "ПО-УМОЛЧАНИЮ" */
-initialCards.forEach(item => elements.cardsContainer.append(createCard(item, deleteCard, likeHandler, imageHandler)));
+initialCards.forEach(item => elements.cardsContainer.append(createCard(item, deleteCard, likeHandler, handleImagePopup)));
 
 /* ФУНКЦИОНАЛЬНОСТЬ ПОПАПА РЕДАКТИРОВАНИЯ ПРОФИЛЯ */
 function handleEditProfile() {
@@ -53,7 +53,7 @@ function handleAddCard() {
 }
 
 /* ФУНКЦИОНАЛЬНОСТЬ УВЕЛИЧЕНИЯ ИЗОБРАЖЕНИЯ КАРТОЧКИ */
-function imageHandler(cardInfo) {
+function handleImagePopup(cardInfo) {
     elements.imagePopup_image.src = cardInfo.link;
     elements.imagePopup_image.alt = cardInfo.name;
     elements.imagePopup_caption.textContent = cardInfo.name;
@@ -77,6 +77,6 @@ function handleAddSubmit(evt) {
         name: placeNameInput.value,
         link: sourceLinkInput.value
     };
-    elements.cardsContainer.prepend(createCard(cardInfo, deleteCard, likeHandler, imageHandler));
+    elements.cardsContainer.prepend(createCard(cardInfo, deleteCard, likeHandler, handleImagePopup));
     closeModal(elements.addCardPopup);
 }
