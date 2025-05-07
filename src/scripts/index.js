@@ -1,6 +1,7 @@
 import { initialCards } from "./cards.js";
 import { createCard, likeHandler, deleteCard } from "../components/card.js";
 import { closeModal, openModal } from "../components/modal.js";
+import { enableValidation, clearValidation } from './validation.js';
 import '../pages/index.css';
 
 // DOM элементы
@@ -39,12 +40,24 @@ function handleEditProfile() {
     const { name, description } = elements.editForm.elements;
     name.value = elements.profileName.textContent;
     description.value = elements.profileDesc.textContent;
+    clearValidation(elements.editForm, {
+        formSelector: '.popup__form',
+        inputSelector: '.popup__input',
+        submitButtonSelector: '.popup__button',
+        inputErrorClass: 'popup__input_invalid'
+    });
     openModal(elements.editPopup);
 }
 
 /* ФУНКЦИОНАЛЬНОСТЬ ПОПАПА ДОБАВЛЕНИЕ КАРТОЧКИ */
 function handleAddCard() {
     elements.addForm.reset();
+    clearValidation(elements.addForm, {
+        formSelector: '.popup__form',
+        inputSelector: '.popup__input',
+        submitButtonSelector: '.popup__button',
+        inputErrorClass: 'popup__input_invalid'
+    });
     openModal(elements.addCardPopup);
 }
 
@@ -76,3 +89,10 @@ function handleAddSubmit(evt) {
     elements.cardsContainer.prepend(createCard(cardInfo, deleteCard, likeHandler, handleImagePopup));
     closeModal(elements.addCardPopup);
 }
+
+enableValidation({
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inputErrorClass: 'popup__input_invalid'
+});
