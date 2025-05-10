@@ -33,6 +33,12 @@ const elements = {
     addForm_linkInput: document.forms['new-place'].elements['link'],
 };
 
+const clearConfig = {
+        formSelector: '.popup__form',
+        inputSelector: '.popup__input',
+        submitButtonSelector: '.popup__button',
+        inputErrorClass: 'popup__input_invalid'
+}; 
 let currentUserId = '';
 
 /* СЛУШАТЕЛИ КНОПОК ОТКРЫТИЯ ПОПАПОВ */
@@ -53,36 +59,21 @@ function handleEditProfile() {
     const { name, description } = elements.editForm.elements;
     name.value = elements.profileName.textContent;
     description.value = elements.profileDesc.textContent;
-    clearValidation(elements.editForm, {
-        formSelector: '.popup__form',
-        inputSelector: '.popup__input',
-        submitButtonSelector: '.popup__button',
-        inputErrorClass: 'popup__input_invalid'
-    });
+    clearValidation(elements.editForm, clearConfig);
     openModal(elements.editPopup);
 }
 
 /* ФУНКЦИОНАЛЬНОСТЬ ПОПАПА РЕДАКТИРОВАНИЯ АВАТАРКИ */
 function handleAvatar() {
     elements.avatarForm.reset();
-    clearValidation(elements.editForm, {
-        formSelector: '.popup__form',
-        inputSelector: '.popup__input',
-        submitButtonSelector: '.popup__button',
-        inputErrorClass: 'popup__input_invalid'
-    });
+    clearValidation(elements.editForm, clearConfig);
     openModal(elements.avatarPopup);
 }
 
 /* ФУНКЦИОНАЛЬНОСТЬ ПОПАПА ДОБАВЛЕНИЕ КАРТОЧКИ */
 function handleAddCard() {
     elements.addForm.reset();
-    clearValidation(elements.addForm, {
-        formSelector: '.popup__form',
-        inputSelector: '.popup__input',
-        submitButtonSelector: '.popup__button',
-        inputErrorClass: 'popup__input_invalid'
-    });
+    clearValidation(elements.addForm, clearConfig);
     openModal(elements.addCardPopup);
 }
 
@@ -99,39 +90,18 @@ function handleEditSubmit(evt) {
     evt.preventDefault();
     const name = elements.editForm_nameInput.value;
     const description = elements.editForm_jobInput.value;
-    elements.profileName.textContent = name;
-    elements.profileDesc.textContent = description;
     
     elements.editForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    patchProfileInfo(name, description)
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на обновление профиля: ${res.status}`);
-    })
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.editForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.editPopup);
-    })
+    patchProfileInfo(elements, name, description);
 }
 
 /* HANDLER ОТПРАВКИ ФОРМЫ ДЛЯ СМЕНЫ АВАТАРКИ */
 function handleAvatarSubmit(evt) {
     evt.preventDefault();
     const linkValue = elements.avatar_linkInput.value;
-    elements.profileImage.style.backgroundImage = `url('${linkValue}');`;
 
     elements.avatarForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    patchAvatar(linkValue)
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на обновление аватарки: ${res.status}`);
-    })
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.avatarForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.avatarPopup);
-    })
+    patchAvatar(elements, linkValue);
 }
 
 /* HANDLER ОТПРАВКИ ФОРМЫ ДЛЯ ДОБАВЛЕНИЯ КАРТОЧКИ  */
@@ -145,17 +115,7 @@ function handleAddSubmit(evt) {
     };
     
     elements.addForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    postCard(cardInfo.name, cardInfo.link)
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на добавление карточки: ${res.status}`);
-    })
-    .then(data => elements.cardsContainer.prepend(createCard(data, currentUserId, deleteCard, likeHandler, handleImagePopup)))
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.addForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.addCardPopup);
-    })
+    postCard(elements, cardInfo.name, cardInfo.link);
 }
 
 enableValidation({
@@ -191,3 +151,5 @@ function setCardsInfo(cardsData) {
 }
 
 getInfo();
+
+export { handleImagePopup, currentUserId };
