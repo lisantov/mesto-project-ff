@@ -92,7 +92,15 @@ function handleEditSubmit(evt) {
     const description = elements.editForm_jobInput.value;
     
     elements.editForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    patchProfileInfo(elements, name, description);
+    patchProfileInfo(name, description)
+    .then((data) => {
+        elements.profileName.textContent = data.name;
+        elements.profileDesc.textContent = data.about;
+    })
+    .finally(()  => {
+        elements.editForm.querySelector('.popup__button').textContent = 'Сохранить';
+        closeModal(elements.editPopup);
+    });
 }
 
 /* HANDLER ОТПРАВКИ ФОРМЫ ДЛЯ СМЕНЫ АВАТАРКИ */
@@ -101,7 +109,14 @@ function handleAvatarSubmit(evt) {
     const linkValue = elements.avatar_linkInput.value;
 
     elements.avatarForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    patchAvatar(elements, linkValue);
+    patchAvatar(linkValue)
+    .then(data => {
+        elements.profileImage.style.backgroundImage = `url(${data.avatar})`;
+    })
+    .finally(()  => {
+        elements.avatarForm.querySelector('.popup__button').textContent = 'Сохранить';
+        closeModal(elements.avatarPopup);
+    });
 }
 
 /* HANDLER ОТПРАВКИ ФОРМЫ ДЛЯ ДОБАВЛЕНИЯ КАРТОЧКИ  */
@@ -115,7 +130,12 @@ function handleAddSubmit(evt) {
     };
     
     elements.addForm.querySelector('.popup__button').textContent = 'Сохранение...';
-    postCard(elements, cardInfo.name, cardInfo.link);
+    postCard(cardInfo.name, cardInfo.link)
+    .then(data => elements.cardsContainer.prepend(createCard(data, currentUserId, deleteCard, likeHandler, handleImagePopup)))
+    .finally(()  => {
+        elements.addForm.querySelector('.popup__button').textContent = 'Сохранить';
+        closeModal(elements.addCardPopup);
+    })
 }
 
 enableValidation({

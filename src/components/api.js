@@ -10,34 +10,32 @@ const config = {
     }
 }
 
+const handleResponse = (res, errorText) => {
+    return new Promise((resolve, reject) => {
+        if(res.ok) return resolve(res.json());
+        else return reject(`${errorText}: ${res.status}`);
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+}
+
 /* ЗАПРОС НА ПОЛУЧЕНИЕ ДАННЫХ ПРОФИЛЯ */
 const getProfileInfo = 
     fetch(`${config.baseUrl}/users/me`, {
         headers: config.headers
     })
-    .then((res) => {
-        if(res.ok) return res.json()
-        return reject(`Что-то пошло не так: ${res.status}`);
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+    .then(res => handleResponse(res, 'Что-то пошло не так при запросе данных о профиле'));
 
 /* ЗАПРОС НА ПОЛУЧЕНИЕ ДАННЫХ КАРТОЧЕК */
 const getCardsInfo = 
     fetch(`${config.baseUrl}/cards`, {
         headers: config.headers
     })
-    .then((res) => {
-        if(res.ok) return res.json()
-        return reject(`Что-то пошло не так: ${res.status}`);
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+    .then(res => handleResponse(res, 'Что-то пошло не так при запросе данных о карточках'));
 
 /* ЗАПРОС НА ИЗМЕНЕНИЕ ДАННЫХ ПРОФИЛЯ */
-const patchProfileInfo = (elements, name, description) => {
+const patchProfileInfo = (name, description) => {
     return fetch(`${config.baseUrl}/users/me`, {
         method: 'PATCH',
         headers: config.headers,
@@ -46,46 +44,23 @@ const patchProfileInfo = (elements, name, description) => {
             about: description
         })
     })
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на обновление профиля: ${res.status}`);
-    })
-    .then((data) => {
-        elements.profileName.textContent = data.name;
-        elements.profileDesc.textContent = data.about;
-    })
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.editForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.editPopup);
-    });
+    .then(res => handleResponse(res, 'Что-то пошло не так при изменении данных профиля'));
 };
 
 /* ЗАПРОС НА ИЗМЕНЕНИЕ АВАТАРКИ ПРОФИЛЯ */
-const patchAvatar = (elements, linkValue) => {
-    fetch(`${config.baseUrl}/users/me/avatar`, {
+const patchAvatar = (linkValue) => {
+    return fetch(`${config.baseUrl}/users/me/avatar`, {
         method: 'PATCH',
         headers: config.headers,
         body: JSON.stringify({
             avatar: linkValue
         })
     })
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на обновление аватарки: ${res.status}`);
-    })
-    .then(data => {
-        elements.profileImage.style.backgroundImage = `url(${data.avatar})`;
-    })
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.avatarForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.avatarPopup);
-    })
+    .then(res => handleResponse(res, 'Что-то пошло не так при изменении автарки профиля'));
 };
 
 /* ЗАПРОС НА ДОБАВЛЕНИЕ КАРТОЧКИ */
-const postCard = (elements, name, link) => {
+const postCard = (name, link) => {
     return fetch(`${config.baseUrl}/cards`, {
         method: 'POST',
         headers: config.headers,
@@ -94,65 +69,34 @@ const postCard = (elements, name, link) => {
             link: link
         })
     })
-    .then(res => {
-        if(res.ok) return res.json();
-        else return Promise.reject(`Ошибка при запросе на добавление карточки: ${res.status}`);
-    })
-    .then(data => elements.cardsContainer.prepend(createCard(data, currentUserId, deleteCard, likeHandler, handleImagePopup)))
-    .catch(err => console.error(err))
-    .finally(()  => {
-        elements.addForm.querySelector('.popup__button').textContent = 'Сохранить';
-        closeModal(elements.addCardPopup);
-    })
+    .then(res => handleResponse(res, 'Что-то пошло не так при добавлении карточки'));
 };
 
 /* ЗАПРОС НА ЛАЙК */
-const putLike = (id, textElement, buttonElement) => {
+const putLike = (id) => {
     return fetch(`${config.baseUrl}/cards/likes/${id}`, {
         method: 'PUT',
         headers: config.headers
     })
-    .then((res) => { 
-        if(res.ok) return res.json();
-        return Promise.reject(`Что то пошло не так при запросе на постановку лайка: ${res.status}`);
-    })
-    .then((data) => {
-        textElement.textContent = data.likes.length;
-        buttonElement.classList.toggle('card__like-button_is-active');
-    })
-    .catch(err => console.error(err))
+    .then(res => handleResponse(res, 'Что-то пошло не так при установке лайка'));
 };
 
 /* ЗАПРОС НА СНЯТИЯ ЛАЙКА */
-const deleteLike = (id, textElement, buttonElement) => {
+const deleteLike = (id) => {
     return fetch(`${config.baseUrl}/cards/likes/${id}`, {
         method: 'DELETE',
         headers: config.headers
     })
-    .then((res) => { 
-        if(res.ok) return res.json();
-        return Promise.reject(`Что то пошло не так при запросе на снятие лайка: ${res.status}`);
-    })
-    .then((data) => {
-        textElement.textContent = data.likes.length;
-        buttonElement.classList.toggle('card__like-button_is-active');
-    })
-    .catch(err => console.error(err))
+    .then(res => handleResponse(res, 'Что-то пошло не так при снятии лайка'));
 };
 
 /* ЗАПРОС НА УДАЛЕНИЕ КАРТОЧКИ */
-const deleteAPICard = (id, cardElement) => {
+const deleteAPICard = (id) => {
     return fetch(`${config.baseUrl}/cards/${id}`, {
         method: 'DELETE',
         headers: config.headers
     })
-    .then((res) => {
-        if(res.ok) {
-            cardElement.remove();
-        }
-        else return Promise.reject(`Что то пошло не так при запросе удаления карточки: ${res.status}`);
-    })
-    .catch(err => console.error(err));
+    .then(res => handleResponse(res, 'Что-то пошло не так при удалении карточки'));
 }
 
 export { getProfileInfo, getCardsInfo, patchProfileInfo, patchAvatar, postCard, putLike, deleteLike, deleteAPICard };

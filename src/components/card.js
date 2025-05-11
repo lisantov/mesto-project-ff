@@ -32,14 +32,22 @@ function createCard(cardInfo, currentUserId, deleteHandler, likeHandler, imageHa
 
 /* ФУНКЦИОНАЛЬНОСТЬ ЛАЙКА НА КАРТОЧКИ */
 function likeHandler(evt, cardInfo, textElement) {
-    const likeMethod = evt.target.classList.contains('card__like-button_is-active') ? deleteLike : putLike;
+    const buttonElement = evt.target;
+    const likeMethod = buttonElement.classList.contains('card__like-button_is-active') ? deleteLike : putLike;
 
-    likeMethod(cardInfo._id, textElement, evt.target);
+    likeMethod(cardInfo._id)
+    .then((data) => {
+        textElement.textContent = data.likes.length;
+        buttonElement.classList.toggle('card__like-button_is-active');
+    });
 }
 
 /* ФУНКЦИОНАЛЬНОСТЬ УДАЛЕНИЯ КАРТОЧЕК */
 function deleteCard(cardElement, cardInfo) {
-    deleteAPICard(cardInfo._id, cardElement);
+    deleteAPICard(cardInfo._id)
+    .then(() => {
+        cardElement.remove();
+    });
 }
 
 export { createCard, likeHandler, deleteCard};
